@@ -208,7 +208,7 @@ def strength(pw: str) -> tuple[int, str]:
     if len(set(pw)) <= 2 or pw.lower() in ("123456", "senha", "password", "qwerty"):
         bits = min(bits, 10)
     score = 0 if bits < 28 else 1 if bits < 40 else 2 if bits < 60 else 3 if bits < 80 else 4
-    return score, ["muito fraca", "fraca", "razoável", "forte", "muito forte"][score] + f" (~{int(bits)} bits)"
+    return score, ["muito fraca", "fraca", "razoável", "forte", "muito forte"][score] + f" (cerca de {int(bits)} bits)"
 
 
 # ================================================================ autenticador (TOTP, RFC 6238)
