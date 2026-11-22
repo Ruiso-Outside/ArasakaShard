@@ -445,7 +445,7 @@ class SecurityPage(Page):
     def holo(self):
         e = core.holo_key_entry()
         if not e:
-            return self.win.alert("Chave do Holo", "Não achei a chave do Holo neste PC (~/.config/arasaka-holo/identity.key).")
+            return self.win.alert("Chave do Holo", "Não achei a chave do Holo neste PC (" + str(core.config_root() / "arasaka-holo" / "identity.key") + ").")
         if any(x.title == e.title for x in self.win.vault.entries):
             return self.win.toast("A chave do Holo já está no cofre")
         self.win.vault.add(e)

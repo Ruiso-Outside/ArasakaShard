@@ -14,6 +14,7 @@ import hmac
 import io
 import json
 import os
+import sys
 import secrets
 import string
 import struct
@@ -28,10 +29,19 @@ from nacl.secret import SecretBox
 
 APP_ID = "arasaka-shard"
 APP_NAME = "ARASAKA SHARD"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 HOME = Path.home()
-CONFIG_DIR = Path(os.environ.get("XDG_CONFIG_HOME", HOME / ".config")) / APP_ID
+
+
+def config_root() -> Path:
+    """Pasta das configuracoes: %APPDATA% no Windows, ~/.config (XDG) no Linux (a mesma regra do Holo)."""
+    if sys.platform == "win32":
+        return Path(os.environ.get("APPDATA", HOME))
+    return Path(os.environ.get("XDG_CONFIG_HOME", HOME / ".config"))
+
+
+CONFIG_DIR = config_root() / APP_ID
 VAULT = CONFIG_DIR / "cofre.shard"
 ASSETS = Path(__file__).resolve().parent / "assets"
 KINDS = {"login": "LOGIN", "nota": "NOTA", "chave": "CHAVE / TOKEN", "cartao": "CARTAO"}
@@ -261,7 +271,8 @@ def export_csv(entries: list[Entry]) -> str:
 
 def holo_key_entry() -> Entry | None:
     """A chave do Holo vira uma entrada do cofre (o nick continua seu mesmo perdendo o arquivo)."""
-    p = Path(os.environ.get("XDG_CONFIG_HOME", HOME / ".config")) / "arasaka-holo" / "identity.key"
+    p = Path(os.environ["ARASAKA_HOLO_HOME"]) if os.environ.get("ARASAKA_HOLO_HOME") else config_root() / "arasaka-holo"
+    p = p / "identity.key"
     try:
         d = json.loads(p.read_text(encoding="utf-8"))
     except Exception:

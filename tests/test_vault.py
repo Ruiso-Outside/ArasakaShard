@@ -24,7 +24,8 @@ v.update(e, password="nova-senha")
 assert e.history and e.history[0]["password"] == "antiga"
 raw = path.read_text()
 assert "GitHub" not in raw and "nova-senha" not in raw and json.loads(raw)["shard"] == 1, "conteudo cifrado no disco"
-assert oct(path.stat().st_mode)[-3:] == "600"
+if os.name != "nt":  # no Windows a pasta do usuario ja e so dele (ACL); chmod nao se aplica
+    assert oct(path.stat().st_mode)[-3:] == "600"
 
 v2 = C.Vault(path)
 try:
